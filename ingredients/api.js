@@ -46,11 +46,11 @@ router.get("/search", async (req, res) => {
 
   if (term) {
     whereClause = `WHERE CONCAT(title, type) ILIKE $2`;
-    params.push(term);
+    params.push(`%${term}%`);
   }
 
   const { rows } = await pool.query(
-    `SELECT * FROM ingredients ${whereClause} OFFSET $1 LIMIT 5`,
+    `SELECT *, COUNT(*) OVER ()::INT AS total_count FROM ingredients ${whereClause} OFFSET $1 LIMIT 5`,
     params
   );
 
