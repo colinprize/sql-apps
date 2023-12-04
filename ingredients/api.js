@@ -33,7 +33,7 @@ router.get("/type", async (req, res) => {
   );
   // return all ingredients of a type
 
-  res.status(501).json({ status: "not implemented", rows: [] });
+  res.status(200).json({ status: "not implemented", rows: [] });
 });
 
 router.get("/search", async (req, res) => {
