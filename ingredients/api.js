@@ -12,12 +12,25 @@ router.get("/client.js", (_, res) =>
  * Student code starts here
  */
 
+const pg = require("pg");
+const pool = new pg.Pool({
+  user: "postgres",
+  host: "localhost",
+  database: "recipeguru",
+  password: "lol",
+  port: 5432,
+});
+
 // connect to postgres
 
 router.get("/type", async (req, res) => {
   const { type } = req.query;
   console.log("get ingredients", type);
 
+  const { rows } = await pool.query(
+    "SELECT * FROM ingredients WHERE type = $1",
+    [type]
+  );
   // return all ingredients of a type
 
   res.status(501).json({ status: "not implemented", rows: [] });
