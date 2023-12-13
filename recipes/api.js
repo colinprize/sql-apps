@@ -23,6 +23,14 @@ router.get("/detail", (_, res) =>
  */
 
 // connect to postgres
+const pg = require("pg");
+const pool = new pg.Pool({
+  user: "postgres",
+  host: "localhost",
+  database: "recipeguru",
+  password: "lol",
+  port: 5432,
+});
 
 router.get("/search", async function (req, res) {
   console.log("search recipes");
