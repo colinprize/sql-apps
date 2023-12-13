@@ -61,6 +61,25 @@ router.get("/get", async (req, res) => {
     `,
     [recipeId]
   );
+
+  const photosPromise = pool.query(
+    `
+    SELECT
+      r.title, r.body, COALESCE(rp.url, 'default.jpg') AS url
+    FROM
+      recipes r
+
+    LEFT JOIN
+      recipes_photos rp
+    ON
+      rp.recipe_id = r.recipe_id
+
+    WHERE
+      r.recipe_id = $1;
+  `,
+    [recipeId]
+  );
+
   const [{ rows: photosRows }, { rows: ingredientsRows }] = await Promise.all([
     photosPromise,
     ingredientsPromise,
