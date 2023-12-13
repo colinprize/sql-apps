@@ -34,6 +34,7 @@ const pool = new pg.Pool({
 
 router.get("/search", async function (req, res) {
   console.log("search recipes");
+
   const { rows } = await pool.query(`
     SELECT DISTINCT ON (r.recipe_id)
       r.recipe_id, r.title, COALESCE(rp.url, 'default.jpg') AS url
