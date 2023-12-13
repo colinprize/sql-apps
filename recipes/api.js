@@ -25,12 +25,18 @@ router.get("/detail", (_, res) =>
 
 router.get("/search", async function (req, res) {
   console.log("search recipes");
+  const { rows } = await pool.query(`
+    SELECT DISTINCT ON (r.recipe_id)
+      r.recipe_id, r.title, COALESCE(rp.url, 'default.jpg') AS url
+    FROM
+      recipes r
+    LEFT JOIN
+      recipes_photos rp
+    ON
+      r.recipe_id = rp.recipe_id;
+  `);
 
-  // return recipe_id, title, and the first photo as url
-  //
-  // for recipes without photos, return url as default.jpg
-
-  res.status(501).json({ status: "not implemented", rows: [] });
+  res.json({ rows });
 });
 
 router.get("/get", async (req, res) => {
