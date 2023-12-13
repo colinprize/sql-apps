@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+const { FORMERR } = require("dns");
 const router = express.Router();
 
 // client side static assets
@@ -42,25 +43,34 @@ router.get("/search", async function (req, res) {
 router.get("/get", async (req, res) => {
   const recipeId = req.query.id ? +req.query.id : 1;
   console.log("recipe get", recipeId);
+  const ingredientsPromise = pool.query(
+    `SELECT
+      i.title AS ingredient_title,
+      i.image AS ingredient_image,
+      i.type AS ingredient_type
+    FROM
+      recipe_ingredients ri
 
-  // return all ingredient rows as ingredients
-  //    name the ingredient image `ingredient_image`
-  //    name the ingredient type `ingredient_type`
-  //    name the ingredient title `ingredient_title`
-  //
-  //
-  // return all photo rows as photos
-  //    return the title, body, and url (named the same)
-  //
-  //
-  // return the title as title
-  // return the body as body
-  // if no row[0] has no photo, return it as default.jpg
+    INNER JOIN
+      ingredients i
+    ON
+      i.id = ri.ingredient_id
 
-  res.status(501).json({ status: "not implemented" });
+    WHERE
+      ri.recipe_id = $1;
+    `,
+    [recipeId]
+  );
+  const [{ rows: photosRows }, { rows: ingredientsRows }] = await Promise.all([
+    photosPromise,
+    ingredientsPromise,
+  ]);
+
+  res.json({
+    ingredients: ingredientsRows,
+    photos: photosRows.map((photo) => photo.url),
+    title: photosRows[0].title,
+    body: photosRows[0].body,
+  });
 });
-/**
- * Student code ends here
- */
-
 module.exports = router;
